@@ -490,3 +490,12 @@ function guardScript(items) {
   return guards ? guardPrelude(guards) + guards : ""
 }
 
+// An action that only asks this shell to summon one of its own plugins can be
+// run in-process, skipping the bash and qs ipc spawns. Anything more than the
+// bare call, such as a second command or a shell-expanded payload, is left to
+// bash.
+function summonAction(action) {
+  var match = /^omarchy-shell shell summon ([A-Za-z0-9._-]+)(?: '([^']*)')?$/.exec(String(action || ""))
+  if (!match) return null
+  return { id: match[1], payload: match[2] || "{}" }
+}
